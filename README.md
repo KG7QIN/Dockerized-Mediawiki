@@ -6,7 +6,7 @@ To get started:
 
 ### 1. Clone this repository
 ```
-git clone
+git clone git@github.com:KG7QIN/Dockerized-Mediawiki.git
 ```
 ### 2. Download download the correct versions of the CirrusSearch and Elastic extensions and place in the build/extensions folder
 CirrusSearch: https://www.mediawiki.org/wiki/Extension:CirrusSearch
