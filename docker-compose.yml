@@ -1,0 +1,66 @@
+   version: '3'
+   services:
+     web:
+       image: mediawiki
+       build: build/.
+       container_name: wiki
+       depends_on: 
+         - database
+       restart: always
+       environment:
+         ## TODO: CHANGE VIRTUAL_HOST, LETSENCRYPT_HOST, and LETSENCRYPT_EMAIL TO YOUR OWN
+         - VIRTUAL_HOST=wiki.example.local
+         - HTTPS_METHOD=redirect
+         - LETSENCRYPT_HOST=wiki.example.local
+         - LETSENCRYPT_EMAIL=admin@wiki.example.local
+         - MW_SEARCH_TYPE=CirrusSearch
+         - MW_CIRRUS_SEARCH_SERVERS=elasticsearch
+         - MW_FLOW_NAMESPACES=NS_TALK,NS_USER_TALK
+       links:
+         - database
+         - elasticsearch
+       volumes:
+         - /srv/wiki/data/wiki/web/images:/var/www/html/images
+         ## TODO: remove the # below AFTER you have downloaded the LocalSettings.php file
+         #- /srv/wiki/config/wiki/LocalSettings.php:/var/www/html/LocalSettings.php
+         - /srv/wiki/config/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
+         - /srv/wiki/config/php/general.ini:/usr/local/etc/php/conf.d/general.ini:ro           
+       networks:
+         - default
+         - nginx-proxy
+    
+     database:
+       image: mariadb
+       container_name: db
+       restart: always
+       environment:
+         MYSQL_DATABASE: mediawiki
+         MYSQL_USER: wikiuser
+         ## TODO: Change the password below
+         MYSQL_PASSWORD: hangeme
+         ## TODO: Change the password below
+         MYSQL_ROOT_PASSWORD: changeme
+       volumes:
+         - /srv/wiki/data/db:/var/lib/mysql
+       networks:
+         - default
+
+     elasticsearch:
+       image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+       restart: always
+       volumes:
+         - /srv/wiki/data/elasticsearch:/usr/share/elasticsearch/data
+         - /srv/wiki/logs/elasticsearch:/usr/share/elasticsearch/logs
+       environment:
+          - discovery.type=single-node
+          - cluster.name=cluster1
+          - node.name=elastic1
+       networks:
+          - default
+
+   networks:
+     nginx-proxy:
+       external:
+         name: nginx-proxy
+
+
