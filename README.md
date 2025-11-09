@@ -15,5 +15,5 @@ Elastica: https://www.mediawiki.org/wiki/Extension:Elastica
 
 ### 3. Follow the instructions at the link above to setup this and the required NGINX proxy container to use.
 
-
+Note: Make sure you change the environment variables for VIRTUAL_HOST, HTTPS_METHOD, LETSENCRYPT_HOST, and LETSENCRYPT_EMAIL to valid values for public (Internet) facing sites.  For private sites, remove or comment out these values.
  
